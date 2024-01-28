@@ -2,7 +2,7 @@
 
 Copipe
 
-![Demonstration](copipe-demo.gif)
+![Demonstration](copipe-demo-2.gif)
 
 ## Installation
 
