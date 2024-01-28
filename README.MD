@@ -39,13 +39,11 @@ Here is an example of `.copipe.yaml` that will first build Go application in one
 
 ```yaml
 steps: 
-  -
-    image: "golang:1.21.6"
+  - image: "golang:1.21.6"
     name: build
     script: 
       - go build .
-  -
-    image: "docker/golangci-lint:1.55.1-go1.21.6"
+  - image: "docker/golangci-lint:1.55.1-go1.21.6"
     name: lint
     script:
       - golangci-lint help linters
