@@ -33,7 +33,11 @@ const (
 func ExecuteStep(dockerClient *client.Client, step Step, workingDir string) error {
 	ctx := context.Background()
 
-	pullImage(dockerClient, step.Image, ctx)
+	err := pullImage(dockerClient, step.Image, ctx)
+
+	if err != nil {
+		return err
+	}
 
 	cmd := prepareCmd(step.Script)
 	containerName := prepareContainerName(step.Name)
@@ -77,7 +81,11 @@ func ExecuteStep(dockerClient *client.Client, step Step, workingDir string) erro
 		return err
 	}
 
-	stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
+	_, err = stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
+
+	if err != nil {
+		return err
+	}
 
 	statusCh, errCh := dockerClient.ContainerWait(ctx, createdContainer.ID, container.WaitConditionNotRunning)
 
@@ -88,8 +96,6 @@ func ExecuteStep(dockerClient *client.Client, step Step, workingDir string) erro
 		}
 	case <-statusCh:
 	}
-
-	stdcopy.StdCopy(os.Stdout, os.Stderr, logs)
 
 	err = dockerClient.ContainerRemove(ctx, createdContainer.ID, container.RemoveOptions{})
 
@@ -109,7 +115,11 @@ func pullImage(dockerClient *client.Client, image string, ctx context.Context) e
 
 	defer reader.Close()
 
-	io.Copy(os.Stdout, reader)
+	_, err = io.Copy(os.Stdout, reader)
+
+	if err != nil {
+		return nil
+	}
 
 	return nil
 }
